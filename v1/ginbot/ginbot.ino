@@ -42,12 +42,15 @@ char pass[] = SECRET_PASS;
 
 // Name of the server we want to connect to
 const char kHostname[] = "192.168.182.204";
+
+//const char kHostname[] = "rpro.local";
+
 // Path to download (this is the bit after the hostname in the URL
 // that you want to download
 const char kPath[] = "/data";
 
 // Number of milliseconds to wait without receiving any data before we give up
-const int kNetworkTimeout = 30*1000;
+const int kNetworkTimeout = 10*1000;
 // Number of milliseconds to wait if no data is available before trying again
 const int kNetworkDelay = 1000;
 
@@ -89,15 +92,24 @@ void loop()
   s2_reading = analogRead(S2);
   s2_voltage = get_voltage(s2_reading);
   s2_temperature = get_temperature(s2_voltage);
+
+  send("s1", s1_temperature);
+  send("s2", s2_temperature);
+  Serial.println("waiting...");
+  Serial.println();
+  http.stop();
+  delay(1000);
+}
+
+void send(String n, float value)
+{
   
   int err =0;
 
-
   String contentType = "application/json";
-  String postData = "{\"Value\":" + String(s1_temperature) + "}";
+  String postData = "{\"Value\":" + String(value) + ", \"Id\": \"" + n + "\"" + "}";
   Serial.println(postData);
-  http.post(kPath, contentType, postData);
-  
+  err = http.post(kPath, contentType, postData);
   if (err == 0)
   {
     Serial.println("startedRequest ok");
@@ -109,10 +121,7 @@ void loop()
       Serial.println(err);
 
       int bodyLen = http.contentLength();
-      Serial.print("Content length is: ");
-      Serial.println(bodyLen);
-      Serial.println();
-      Serial.println("Body returned follows:");
+      Serial.print("Server:");
     
       // Now we've got to the body, so we can print it out
       unsigned long timeoutStart = millis();
@@ -141,17 +150,14 @@ void loop()
     }
     else
     {    
-      Serial.print("Getting response failed: ");
+      Serial.print("Getting response FAILED: ");
       Serial.println(err);
     }
   }
   else
   {
-    Serial.print("Connect failed: ");
+    Serial.print("Connect FAILED: ");
     Serial.println(err);
   }
-  http.stop();
-  Serial.println("...");
-  Serial.println("gday");
-  delay(1000);
-}
+  Serial.println();
+ }
