@@ -34,6 +34,8 @@ float get_temperature(float voltage) {
   return (voltage - 1.25) / 0.005;
 }
 
+const int SAMPLE_PERIOD = 1000;
+
 ///////please enter your sensitive data in the Secret tab/arduino_secrets.h
 /////// Wifi Settings ///////
 char ssid[] = SECRET_SSID;
@@ -98,7 +100,7 @@ void loop()
   Serial.println("waiting...");
   Serial.println();
   http.stop();
-  delay(1000);
+  delay(SAMPLE_PERIOD);
 }
 
 void send(String n, float value)
