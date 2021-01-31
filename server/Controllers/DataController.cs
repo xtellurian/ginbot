@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using server.Models;
 
 namespace server.Controllers
 {
     [Route("/data")]
     public class DataController : Controller
     {
-        private readonly ILogger<DataController> _logger;
-        private static Saver saver;
-        public DataController(ILogger<DataController> logger, IWebHostEnvironment env)
+        private readonly ILogger<DataController> logger;
+        private readonly ISaver saver;
+
+        public DataController(ILogger<DataController> logger, ISaver saver)
         {
-            var run = $"{DateTime.Now.ToShortTimeString()}";
-            _logger = logger;
-            saver ??= new Saver(env.ContentRootPath, run);
+            this.logger = logger;
+            this.saver = saver;
         }
 
         [HttpGet]
@@ -33,13 +28,11 @@ namespace server.Controllers
         {
             if (p is null)
             {
-                Console.WriteLine("No Value");
+                logger.LogDebug("No value in request body.");
                 return Ok($"{DateTime.Now}> Empty...");
             }
             else
             {
-                Console.WriteLine($"{DateTime.Now}> {p.Id} is: {p?.Value}");
-                Console.WriteLine("Saving Row...");
                 saver.SaveRow(p);
                 return Ok($"You posted to ginbot | {p.Id}:{p?.Value}");
             }
