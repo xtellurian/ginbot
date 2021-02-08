@@ -19,6 +19,23 @@
 #define S1 A0
 #define S2 A1
 
+
+const int SAMPLE_PERIOD = 50;
+
+///////please enter your sensitive data in the Secret tab/arduino_secrets.h
+/////// Wifi Settings ///////
+char ssid[] = SECRET_SSID;
+char pass[] = SECRET_PASS;
+
+
+// Name of the server we want to connect to
+const char kHostname[] = "192.168.182.204";
+//const char kHostname[] = "RPro.local";
+
+// Path to download (this is the bit after the hostname in the URL
+// that you want to download
+const char kPath[] = "/data";
+
 // analog input, its range may vary from 0 to 4095.
 
 float  m, b;
@@ -34,22 +51,6 @@ float get_temperature(float voltage) {
   return (voltage - 1.25) / 0.005;
 }
 
-const int SAMPLE_PERIOD = 1000;
-
-///////please enter your sensitive data in the Secret tab/arduino_secrets.h
-/////// Wifi Settings ///////
-char ssid[] = SECRET_SSID;
-char pass[] = SECRET_PASS;
-
-
-// Name of the server we want to connect to
-const char kHostname[] = "192.168.182.204";
-
-//const char kHostname[] = "rpro.local";
-
-// Path to download (this is the bit after the hostname in the URL
-// that you want to download
-const char kPath[] = "/data";
 
 // Number of milliseconds to wait without receiving any data before we give up
 const int kNetworkTimeout = 10*1000;
